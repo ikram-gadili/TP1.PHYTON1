@@ -1,26 +1,43 @@
-class CompteurPage:
-    total_visites = 0
-    
-    def __init__(self, url: str):
-        self.url = url
-        self.visites_par_page = 0
-        CompteurPage.total_visites += 1
-        self.enregistrer_lecture()
-    
-    def enregistrer_lecture(self):
-        self.visites_par_page += 1
-    
-    def afficher_stats(self) -> str:
-        return f"Page {self.url} - visites globales : {CompteurPage.total_visites} | visites cette page : {self.visites_par_page}"
+# -*- coding: utf-8 -*-
 
-# Test
-p1 = CompteurPage("https://example.com")
-p2 = CompteurPage("https://example.com/blog")
-p3 = CompteurPage("https://example.com/contact")
+class Article:
+    def __init__(self, reference: str, designation: str, prix_ht: float, stock: int = 0):
+        self.reference = reference
+        self.designation = designation
+        self.prix_ht = prix_ht
+        self.stock = stock
 
-p1.enregistrer_lecture()
-p1.enregistrer_lecture()
-p3.enregistrer_lecture()
+    def valeur_stock(self) -> float:
+        return self.prix_ht * self.stock
 
-for p in [p1, p2, p3]:
-    print(p.afficher_stats())
+    def __str__(self) -> str:
+        return f"Réf {self.reference} – {self.designation} : {self.stock} unités à {self.prix_ht} € HT"
+
+    def approvisionner(self, qte: int):
+        self.stock += qte
+        with open("mouvements.log", "a", encoding="utf-8") as f:
+            f.write(f"+{qte} {self.reference} ({self.designation})\n")
+
+
+# Création des 3 articles
+a1 = Article("REF001", "Clavier mécanique", 75.90, 10)
+a2 = Article("REF002", "Souris gamer", 49.50, 25)
+a3 = Article("REF003", "Écran 27\"", 299.00, 5)
+
+articles = [a1, a2, a3]
+
+# Affichage demandé
+for a in articles:
+    print(a)
+
+# Valeur totale du stock
+total = sum(a.valeur_stock() for a in articles)
+print(f"Valeur d'inventaire : {total:.2f} €")
+
+# Petit test de l'approvisionnement (facultatif)
+a1.approvisionner(8)
+a3.approvisionner(3)
+
+print("\nAprès approvisionnement :")
+print(a1)
+print(a3)

@@ -1,4 +1,4 @@
-# convertisseur.py
+# convertisseur.py (tout en un seul fichier)
 
 class Convertisseur:
     taux_eur_dh = 10.9

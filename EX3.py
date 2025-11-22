@@ -1,43 +1,53 @@
 # -*- coding: utf-8 -*-
 
-class Article:
-    def __init__(self, reference: str, designation: str, prix_ht: float, stock: int = 0):
-        self.reference = reference
-        self.designation = designation
-        self.prix_ht = prix_ht
-        self.stock = stock
-
-    def valeur_stock(self) -> float:
-        return self.prix_ht * self.stock
-
-    def __str__(self) -> str:
-        return f"Réf {self.reference} – {self.designation} : {self.stock} unités à {self.prix_ht} € HT"
-
-    def approvisionner(self, qte: int):
-        self.stock += qte
-        with open("mouvements.log", "a", encoding="utf-8") as f:
-            f.write(f"+{qte} {self.reference} ({self.designation})\n")
+class Contact:
+    def __init__(self, nom: str, telephone: str, email: str):
+        self.nom = nom
+        self.telephone = telephone
+        self.email = email
+    
+    @property
+    def initiale(self):
+        return self.nom[0].upper()
 
 
-# Création des 3 articles
-a1 = Article("REF001", "Clavier mécanique", 75.90, 10)
-a2 = Article("REF002", "Souris gamer", 49.50, 25)
-a3 = Article("REF003", "Écran 27\"", 299.00, 5)
+class Carnet:
+    def __init__(self):
+        self._contacts = []                     # attribut privé
+    
+    def ajouter(self, contact: Contact):
+        self._contacts.append(contact)
+    
+    def recherche(self, fragment: str):
+        frag = fragment.lower()
+        return [c for c in self._contacts if frag in c.nom.lower()]
+    
+    def afficher_tous(self):
+        for c in self._contacts:
+            print(f"{c.nom} – {c.telephone} – {c.email}")
+    
+    @property
+    def nombre_contacts(self):
+        return len(self._contacts)
 
-articles = [a1, a2, a3]
 
-# Affichage demandé
-for a in articles:
-    print(a)
-
-# Valeur totale du stock
-total = sum(a.valeur_stock() for a in articles)
-print(f"Valeur d'inventaire : {total:.2f} €")
-
-# Petit test de l'approvisionnement (facultatif)
-a1.approvisionner(8)
-a3.approvisionner(3)
-
-print("\nAprès approvisionnement :")
-print(a1)
-print(a3)
+# Démonstration (lance le fichier et ça s'exécute)
+if __name__ == "__main__":
+    c = Carnet()
+    
+    c.ajouter(Contact("Amina Saidi",      "0612345678", "amina@example.com"))
+    c.ajouter(Contact("Youssef Belkhou",  "0699988777", "youssef@example.com"))
+    c.ajouter(Contact("Said Toumi",       "0677801122", "said@example.com"))
+    
+    print("Tous les contacts :")
+    c.afficher_tous()
+    print()
+    
+    print("Recherche avec 'sa' :")
+    resultat = c.recherche("sa")
+    for contact in resultat:
+        print(contact.nom, contact.telephone)
+    
+    print()
+    print(f"Nombre total de contacts : {c.nombre_contacts}")
+    print(f"Initiale du premier contact : {c._contacts[0].initiale}")
